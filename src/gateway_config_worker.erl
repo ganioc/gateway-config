@@ -56,7 +56,7 @@ init(_) ->
 
 
 init_button(Args) ->
-    case file:read_file_info("/dev/gpio") of
+    case file:read_file_info("/dev/gpiochip0") of
         {ok, _} ->
             Gpio = proplists:get_value(gpio, Args, 7),
             {ok, Pid} = gpio_button:start_link(Gpio, self()),
