@@ -14,6 +14,8 @@ WORKDIR /usr/src/gateway_config
 
 COPY . .
 COPY ./config/com.helium.Config.conf /etc/dbus-1/system.d/
+RUN make
+RUN make release
 
 CMD ["/bin/sh"]
 
