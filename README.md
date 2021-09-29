@@ -4,6 +4,13 @@
 [![Build Tool][build tool]][rebar]
 
 
+# How to run
+```
+sudo docker run -it -d  -v /var/run/dbus:/var/run/dbus --privileged  --ulimit nofile=64000:64000  --name gwtest gwtest:0.1.9
+
+```
+
+
 # gateway-config
 
 The Helium configuration application. Manages the configuration of the
