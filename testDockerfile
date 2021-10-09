@@ -18,5 +18,7 @@ RUN make
 RUN make release
 WORKDIR /usr/src/gateway_config/_build/prod/rel/gateway_config
 COPY ./run.sh .
+COPY ./lsb_release /etc/
+
 # RUN ./bin/gateway_config start
 CMD ["./run.sh"]

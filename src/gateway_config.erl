@@ -42,6 +42,7 @@ mac_address(eth) ->
     mac_address(["eth", "en"]);
 mac_address(DevicePrefixes) when is_list(DevicePrefixes) ->
     {ok, S} = inet:getifaddrs(),
+    %% lager:info("togetifaddrs:~p",[S]),
     case lists:filter(fun({K, _}) ->
                               lists:any(fun(Prefix) ->
                                                 lists:prefix(Prefix, K)
