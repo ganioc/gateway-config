@@ -35,10 +35,10 @@
 
 -define(COLOR_BLUE, [0, 0, 255]).
 
--define(COLOR_ORANGE, [255, 255, 0]).
+-define(COLOR_ORANGE, [255, 50, 0]).
 
-%% Add by Yango gateway_config_led.erlq
--define(COLOR_WHITE, [160,32,240]).
+%% Add by Yango gateway_config_led.erlq, it's pink
+-define(COLOR_WHITE, [255,0,128]).
 
 -define(DIALABLE_TIMEOUT, 60 * 1000).
 

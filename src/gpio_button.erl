@@ -15,7 +15,7 @@
               }).
 
 -define(DEFAULT_LONG_PRESS_TIMEOUT, 10000).
--define(DEFAULT_CLICK_TIMEOUT, 500).
+-define(DEFAULT_CLICK_TIMEOUT, 300).
 
 %% gen_statem
 -export([callback_mode/0, start_link/2, start_link/3, init/1,
@@ -46,10 +46,10 @@ init([GpioNum, Owner, Options]) ->
                      long_click_timer=make_ref(),long_click_timeout=?DEFAULT_LONG_PRESS_TIMEOUT
                     }}.
 
-idle(info, {gpio_interrupt, GpioNum, falling}, #data{gpio_num=GpioNum}) ->
+idle(info, {gpio_interrupt, GpioNum, rising}, #data{gpio_num=GpioNum}) ->
     keep_state_and_data;
 
-idle(info, {gpio_interrupt, GpioNum, rising}, Data=#data{gpio_num=GpioNum}) ->
+idle(info, {gpio_interrupt, GpioNum, falling}, Data=#data{gpio_num=GpioNum}) ->
     %% {next_state, pressed, button_pressed(Data)};
     {next_state, pressed, long_button_pressed(Data)};
 
@@ -57,10 +57,10 @@ idle(EventType, Msg, Data) ->
     handle_event(EventType, Msg, Data).
 
 
-pressed(info, {gpio_interrupt, GpioNum, rising}, #data{gpio_num=GpioNum}) ->
+pressed(info, {gpio_interrupt, GpioNum, falling}, #data{gpio_num=GpioNum}) ->
     keep_state_and_data;
 
-pressed(info, {gpio_interrupt, GpioNum, falling}, Data=#data{gpio_num=GpioNum}) ->
+pressed(info, {gpio_interrupt, GpioNum, rising}, Data=#data{gpio_num=GpioNum}) ->
     {next_state, clicked, button_clicked(Data)};
 
 pressed(info, long_press_timeout, Data=#data{owner=Owner}) ->
@@ -71,11 +71,11 @@ pressed(info, long_press_timeout, Data=#data{owner=Owner}) ->
 pressed(EventType, Msg, Data) ->
     handle_event(EventType, Msg, Data).
 
-clicked(info, {gpio_interrupt, GpioNum, rising}, Data=#data{gpio_num=GpioNum}) ->
+clicked(info, {gpio_interrupt, GpioNum, falling}, Data=#data{gpio_num=GpioNum}) ->
     %%{next_state, pressed, button_pressed(Data)};
     {next_state, pressed, long_button_pressed(Data)};
 
-clicked(info, {gpio_interrupt, GpioNum, falling}, #data{gpio_num=GpioNum}) ->
+clicked(info, {gpio_interrupt, GpioNum, rising}, #data{gpio_num=GpioNum}) ->
     keep_state_and_data;
 
 clicked(info, click_timeout, Data=#data{owner=Owner}) ->
@@ -122,7 +122,7 @@ button_idle(Data=#data{}) ->
 
 -spec button_clicked(#data{}) -> #data{}.
 button_clicked(Data=#data{}) ->
-    %% lager:info("button_clicked ,~p add 1",[Data#data.click_count]),
+    lager:info("button_clicked ,~p add 1",[Data#data.click_count]),
     %% add by Yango
     erlang:cancel_timer(Data#data.long_click_timer),
 

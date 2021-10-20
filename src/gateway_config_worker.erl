@@ -120,14 +120,14 @@ handle_info({button_long_press, _}, _State=#state{}) ->
     gateway_config_led:lights_event(cleancache),
     lager:info("Switch LED to cleancache"),
     os:cmd("./clean-cache.sh"),
-    timer:sleep(2000),
+    timer:sleep(3000),
     %% do the real clean cache work here
 
     lager:info("Switch LED back ~p",[0]),
     %% gateway_config_led:lights_event(old_state),
     
-    handle_info({enable_advertising, true}, _State);
-
+    %% handle_info({enable_advertising, true}, _State);
+    {noreply, _State};
 
 %% BLE Advertising
 handle_info({enable_advertising, true}, State=#state{bluetooth_advertisement=undefined}) ->
