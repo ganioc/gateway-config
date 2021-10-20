@@ -108,6 +108,27 @@ handle_info({button_clicked, _, 1}, State=#state{}) ->
     connman:scan(wifi),
     handle_info({enable_advertising, true}, State);
 
+%% Long Button click, add by Yango
+handle_info({button_long_press, _}, _State=#state{}) ->
+    lager:info("Long Button clicked"),
+    %% Start a scan for visible wifi services
+    % connman:enable(wifi, true),
+    % connman:scan(wifi),
+    %% {_,old_state}=gateway_config:lights_info(),
+    %% oldstate = gateway_config:lights_info(),
+    lager:info("LED old state is ~p", [gateway_config:lights_info()]),
+    gateway_config_led:lights_event(cleancache),
+    lager:info("Switch LED to cleancache"),
+    os:cmd("./clean-cache.sh"),
+    timer:sleep(2000),
+    %% do the real clean cache work here
+
+    lager:info("Switch LED back ~p",[0]),
+    %% gateway_config_led:lights_event(old_state),
+    
+    handle_info({enable_advertising, true}, _State);
+
+
 %% BLE Advertising
 handle_info({enable_advertising, true}, State=#state{bluetooth_advertisement=undefined}) ->
     lager:info("Enabling advertising"),

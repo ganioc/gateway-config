@@ -5,3 +5,4 @@ echo "$(pwd)"
 ./bin/gateway_config start
 /bin/sh
 echo "=========End==========="
+

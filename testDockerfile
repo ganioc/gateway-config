@@ -17,6 +17,7 @@ COPY ./config/com.helium.Config.conf /etc/dbus-1/system.d/
 RUN make
 RUN make release
 WORKDIR /usr/src/gateway_config/_build/prod/rel/gateway_config
+COPY ./clean-cache.sh .
 COPY ./run.sh .
 COPY ./lsb_release /etc/
 

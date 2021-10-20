@@ -37,6 +37,9 @@
 
 -define(COLOR_ORANGE, [255, 255, 0]).
 
+%% Add by Yango gateway_config_led.erlq
+-define(COLOR_WHITE, [160,32,240]).
+
 -define(DIALABLE_TIMEOUT, 60 * 1000).
 
 %% How often to go fetch diagnostics.
@@ -49,11 +52,12 @@
 -export([handle_call/3, handle_cast/2, handle_info/2,
 	 init/1, start_link/1, terminate/2]).
 
+%% add bu yango, cleancache
 -type led_event() :: panic | disable | enable |
-		     start_advert | stop_advert | online | offline.
+		     start_advert | stop_advert | online | offline | cleancache.
 
 -type led_state() :: undefined | panic | disable |
-		     {advert, term()} | online | offline.
+		     {advert, term()} | online | offline | cleancache.
 
 -record(state,
 	{handle = undefined  :: lp5562:state() | undefined,
@@ -91,7 +95,7 @@ init([Bus]) ->
 		      lager:warning("No i2c device found, running in stub "
 				    "mode"),
 		      %% undefined
-		      notused
+              notused
 		end,
     {ok, BluezProxy} = ebus_proxy:start_link(Bus,
 					     ?BLUEZ_SERVICE, []),
@@ -246,6 +250,10 @@ update_led_state(offline,
     State;
 update_led_state(offline, State = #state{}) ->
     State#state{state = offline};
+%% add by yango
+update_led_state(cleancache, State=#state{}) ->
+    State#state{state = cleancache};
+
 %% Fallback fr all other events
 update_led_state(_Event, State = #state{}) ->
     State#state{state = offline}.
@@ -271,6 +279,10 @@ update_led(State = #state{state = offline}) ->
     led_set_color(?COLOR_ORANGE, State);
 update_led(State = #state{state = undefined}) ->
     led_set_color(?COLOR_ORANGE, State);
+%% add by yango
+update_led(State = #state{state = cleancache}) ->
+    led_set_color(?COLOR_WHITE, State);
+    
 update_led(State = #state{state = {advert, _}}) ->
     led_set_color(?COLOR_BLUE, State).
 
@@ -297,3 +309,4 @@ led_set_color(_Color , State ) ->
     end, 
     lager:info("led_set_color Value:~p",[Value]),
     State.
+
